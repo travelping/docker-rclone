@@ -20,8 +20,7 @@ $ docker run --rm -it --entrypoint=/bin/sh travelping/rclone:latest
 ## Debugging
 All inotify-events can be neatly logged using this command:
 ```
-inotifywait -mr --timefmt '%H:%M' --format '%T %w %e %f' /data/
-/usr/bin/tshark -b filesize:1000000 -b files:10 -b duration:10 -w /data/test -f "udp port 2123"
+inotifywait -mr --timefmt '%H:%M' --format '%T %w %e %f' /data/"
 ```
 
 ## Script
