@@ -29,6 +29,7 @@ LABEL org.opencontainers.image.description="rclone - rsync for cloud storage"
 
 RUN apk --update --no-cache add \
         ca-certificates \
+        coreutils \
         inotify-tools \
         lz4 zstd
 COPY --from=builder /usr/bin/rclone /usr/bin/rclone
