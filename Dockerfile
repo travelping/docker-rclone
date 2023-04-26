@@ -1,4 +1,4 @@
-FROM alpine:3.17.0 as base
+FROM alpine:3.17 as base
 
 ## build-stage
 
@@ -27,7 +27,7 @@ LABEL org.opencontainers.image.vendor="Travelping GmbH"
 LABEL org.opencontainers.image.title="rclone-$VERSION"
 LABEL org.opencontainers.image.description="rclone - rsync for cloud storage"
 
-RUN apk --update --no-cache add \
+RUN apk update && apk upgrade --no-cache && apk --no-cache add \
         ca-certificates \
         coreutils \
         inotify-tools \
