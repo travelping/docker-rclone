@@ -1,9 +1,9 @@
-FROM alpine:3.17 as base
+FROM alpine:3.19 as base
 
 ## build-stage
 
 FROM base as builder
-ARG VERSION=v1.60.1
+ARG VERSION=v1.65.1
 
 RUN wget https://github.com/rclone/rclone/releases/download/$VERSION/rclone-$VERSION-linux-amd64.zip
 RUN unzip rclone-$VERSION-linux-amd64.zip
@@ -17,7 +17,7 @@ RUN cd rclone-*-linux-amd64 && \
 
 FROM base
 
-ARG VERSION=v1.60.1
+ARG VERSION=v1.65.0
 
 ## https://github.com/opencontainers/image-spec/releases/tag/v1.0.1
 LABEL org.opencontainers.image.url="https://github.com/travelping/docker-rclone"
