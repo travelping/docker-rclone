@@ -1,14 +1,15 @@
-FROM alpine:3.21.3 as base
+FROM alpine:3.23.3 as base
 
 ## build-stage
 
 FROM base as builder
-ARG VERSION=v1.69.1
+ARG VERSION=v1.73.1
+ARG SHA256=e9bad0be2ed85128e0d977bf36c165dd474a705ea950d18e1005cef98119407b
 
-RUN wget https://github.com/rclone/rclone/releases/download/$VERSION/rclone-$VERSION-linux-amd64.zip
-RUN unzip rclone-$VERSION-linux-amd64.zip
-RUN cd rclone-*-linux-amd64 && \
-    cp rclone /usr/bin/ && \
+ADD --checksum="sha256:$SHA256" https://github.com/rclone/rclone/releases/download/$VERSION/rclone-$VERSION-linux-amd64.zip /tmp/rclone.zip
+WORKDIR /tmp
+RUN unzip -d . rclone.zip "**/rclone" && \
+    find . -name "rclone" -type f -exec cp {} /usr/bin ';' && \
     chown root:root /usr/bin/rclone && \
     chmod 755 /usr/bin/rclone
 
@@ -17,7 +18,7 @@ RUN cd rclone-*-linux-amd64 && \
 
 FROM base
 
-ARG VERSION=v1.69.1
+ARG VERSION=v1.73.1
 
 ## https://github.com/opencontainers/image-spec/releases/tag/v1.0.1
 LABEL org.opencontainers.image.url="https://github.com/travelping/docker-rclone"
