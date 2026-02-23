@@ -20,7 +20,7 @@ FROM base
 
 ARG VERSION=v1.73.1
 
-## https://github.com/opencontainers/image-spec/releases/tag/v1.0.1
+## https://github.com/opencontainers/image-spec/blob/v1.1.1/annotations.md
 LABEL org.opencontainers.image.url="https://github.com/travelping/docker-rclone"
 LABEL org.opencontainers.image.source="https://github.com/travelping/docker-rclone"
 LABEL org.opencontainers.image.version=$VERSION
