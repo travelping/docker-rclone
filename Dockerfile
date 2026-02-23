@@ -1,8 +1,8 @@
-FROM alpine:3.23.3 as base
+FROM alpine:3.23.3 AS base
 
 ## build-stage
 
-FROM base as builder
+FROM base AS builder
 ARG VERSION=v1.73.1
 ARG SHA256=e9bad0be2ed85128e0d977bf36c165dd474a705ea950d18e1005cef98119407b
 
