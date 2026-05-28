@@ -1,0 +1,38 @@
+[tools]
+grype = "0.112.0"
+pinact = "4.0.0"
+
+[tasks.build]
+usage = '''
+arg "<image>" default="localhost/docker-rclone"
+arg "<tag>" default="latest"
+flag "-e --engine <engine>" default="podman" help="container engine (docker or podman)"
+'''
+run = '''
+version=$(awk -F\" '/^\[tools\."http:rclone"\]$/{f=1;next} /^\[/{f=0} f && /^version[[:space:]]*=/{print $2;exit}' mise.container.toml)
+"$usage_engine" build --build-arg RCLONE_VERSION="$version" -t "$usage_image:$usage_tag" .
+'''
+
+[tasks.report-grype]
+usage = '''
+arg "<image>" default="localhost/docker-rclone"
+arg "<tag>" default="latest"
+'''
+run = """
+tmp=$(mktemp -t docker-rclone.XXXXXX)
+trap 'rm -f "$tmp"' EXIT
+podman save "$usage_image:$usage_tag" -o "$tmp"
+grype "docker-archive:$tmp" -o json | jq -r '
+  {"Critical":1,"High":2,"Medium":3,"Low":4,"Negligible":5,"Unknown":6} as $rank
+  | .matches[]
+  | [ $rank[.vulnerability.severity],
+      (.artifact.name + "@" + .artifact.version),
+      .vulnerability.id,
+      (.vulnerability.severity | ascii_upcase) ]
+  | @tsv' | \
+  sort -t"$(printf '\\t')" -u -k2,2 -k1,1n -k3,3 | \
+  cut -f2- | \
+  column -t
+"""
+#        jq -r '.Results[0].Vulnerabilities[]?|[.PkgID, .VulnerabilityID,.Severity]|@tsv'
+#"""
