@@ -1,0 +1,7 @@
+[tools."http:rclone"]
+version = "1.74.2"
+strip_components = 1
+
+[tools."http:rclone".platforms]
+linux-x64 = { url = "https://github.com/rclone/rclone/releases/download/v1.74.2/rclone-v1.74.2-linux-amd64.zip" }
+linux-arm64 = { url = "https://github.com/rclone/rclone/releases/download/v1.74.2/rclone-v1.74.2-linux-arm64.zip" }
