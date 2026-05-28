@@ -45,5 +45,6 @@ RUN apk update && apk upgrade --no-cache && apk --no-cache add \
     inotify-tools \
     lz4 zstd
 COPY --from=builder /usr/bin/rclone /usr/bin/rclone
+COPY LICENSE.rclone /LICENSE.rclone
 
 ENTRYPOINT ["/usr/bin/rclone"]
