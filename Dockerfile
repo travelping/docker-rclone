@@ -44,6 +44,14 @@ RUN apk update && apk upgrade --no-cache && apk --no-cache add \
     coreutils \
     inotify-tools \
     lz4 zstd
+
+# Drop the root CAs listed in tools/ca-distrust.sha256 (eMudhra/emSign) from
+# the system bundle; must run after the last apk step, an
+# update-ca-certificates trigger regenerates the bundle.
+COPY tools/ca-distrust.sh tools/ca-distrust.sha256 /tmp/
+RUN sh /tmp/ca-distrust.sh /etc/ssl/certs/ca-certificates.crt /tmp/ca-distrust.sha256 \
+ && rm /tmp/ca-distrust.sh /tmp/ca-distrust.sha256
+
 COPY --from=builder /usr/bin/rclone /usr/bin/rclone
 COPY LICENSE.rclone /LICENSE.rclone
 
