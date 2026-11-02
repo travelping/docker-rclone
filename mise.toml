@@ -1,6 +1,6 @@
 [tools]
-grype = "0.112.0"
-pinact = "4.0.0"
+grype = "0.121.0"
+pinact = "5.0.2"
 
 [tasks.build]
 usage = '''
@@ -17,18 +17,23 @@ version=$(awk -F\" '/^\[tools\."http:rclone"\]$/{f=1;next} /^\[/{f=0} f && /^ver
 usage = '''
 arg "<image>" default="localhost/docker-rclone"
 arg "<tag>" default="latest"
+flag "--only-fixed" help="only findings with a fixed version, listed as 4th column"
 '''
 run = """
 tmp=$(mktemp -t docker-rclone.XXXXXX)
 trap 'rm -f "$tmp"' EXIT
 podman save "$usage_image:$usage_tag" -o "$tmp"
-grype "docker-archive:$tmp" -o json | jq -r '
+fixed=false
+[ "${usage_only_fixed:-false}" = "true" ] && fixed=true
+grype "docker-archive:$tmp" -o json | jq -r --argjson fixed "$fixed" '
   {"Critical":1,"High":2,"Medium":3,"Low":4,"Negligible":5,"Unknown":6} as $rank
   | .matches[]
+  | select(($fixed | not) or .vulnerability.fix.state == "fixed")
   | [ $rank[.vulnerability.severity],
       (.artifact.name + "@" + .artifact.version),
       .vulnerability.id,
       (.vulnerability.severity | ascii_upcase) ]
+    + (if $fixed then [ .vulnerability.fix.versions | join(",") ] else [] end)
   | @tsv' | \
   sort -t"$(printf '\\t')" -u -k2,2 -k1,1n -k3,3 | \
   cut -f2- | \
@@ -36,3 +41,7 @@ grype "docker-archive:$tmp" -o json | jq -r '
 """
 #        jq -r '.Results[0].Vulnerabilities[]?|[.PkgID, .VulnerabilityID,.Severity]|@tsv'
 #"""
+
+[tasks.report-grype-fixed]
+description = "grype findings that already have a fixed version"
+run = "mise run report-grype --only-fixed"
