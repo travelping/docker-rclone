@@ -1,4 +1,4 @@
-FROM alpine:3.23.4 AS base
+FROM alpine:3.24.3 AS base
 
 ## build-stage
 
@@ -29,7 +29,7 @@ FROM base
 
 ## supplied by the `mise run build` task (derived from mise.container.toml)
 ## or by docker/metadata-action in CI; default is a fallback for raw builds
-ARG RCLONE_VERSION=1.74.2
+ARG RCLONE_VERSION=1.75.2
 
 ## https://github.com/opencontainers/image-spec/blob/v1.1.1/annotations.md
 LABEL org.opencontainers.image.url="https://github.com/travelping/docker-rclone"
